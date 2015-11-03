@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <link rel="stylesheet" href="src/angular-advanced-searchbox.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+
+    <script type="application/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="application/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="application/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="src/angular-advanced-searchbox.js"></script>
+</head>
+<body>
+    <div ng-app="myModule" ng-controller="myCtrl">
+        Write some text in textbox:
+        <input type="text" ng-model="sometext"/>
+
+        <h1>Hello {{ sometext }}</h1>
+        <nit-advanced-searchbox
+                ng-model="searchParams"
+                parameters="availableSearchParams"
+                placeholder="Search...">
+        </nit-advanced-searchbox>
+        <h2>{{searchParams}}</h2>
+    </div>
+    <script>
+        var app = angular.module('myModule', ['angular-advanced-searchbox'])
+        app.controller('myCtrl', function($scope) {
+            $scope.sometext = "world1";
+
+            $scope.availableSearchParams = [
+                { key: "name", name: "Name", placeholder: "Name..." },
+                { key: "city", name: "City", placeholder: "City..." },
+                { key: "country", name: "Country", placeholder: "Country..." },
+                { key: "emailAddress", name: "E-Mail", placeholder: "E-Mail..." },
+                { key: "job", name: "Job", placeholder: "Job..." }
+            ];
+        })
+    </script>
+</body>
+</html>

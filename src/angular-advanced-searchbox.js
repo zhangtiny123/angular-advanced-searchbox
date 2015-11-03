@@ -290,8 +290,9 @@ angular.module('angular-advanced-searchbox', [])
                     model: '=ngModel'
                 },
                 link: function($scope, $element, $attrs) {
-                    var container = angular.element('<div style="position: fixed; top: -9999px; left: 0px;"></div>');
-                    var shadow = angular.element('<span style="white-space:pre;"></span>');
+                    var container = angular.element('<div style="position: fixed; top: -9999px; left: 0;"></div>');
+                    var element = document.createElement('span');
+                    element.style.whiteSpace = 'pre';
 
                     var maxWidth = $element.css('maxWidth') === 'none' ? $element.parent().innerWidth() : $element.css('maxWidth');
                     $element.css('maxWidth', maxWidth);
@@ -302,14 +303,14 @@ angular.module('angular-advanced-searchbox', [])
                         'boxSizing', 'borderLeftWidth', 'borderRightWidth', 'borderLeftStyle', 'borderRightStyle',
                         'paddingLeft', 'paddingRight', 'marginLeft', 'marginRight'
                     ], function(css) {
-                        shadow.css(css, $element.css(css));
+                        element.style[css] = $element.css(css);
                     });
 
-                    angular.element('body').append(container.append(shadow));
+                    angular.element(document).find('body').append(container.append(element));
 
                     function resize() {
-                        shadow.text($element.val() || $element.attr('placeholder'));
-                        $element.css('width', shadow.outerWidth() + 10);
+                        element.textContent = $element.val() || $element.attr('placeholder');
+                        $element.css('width', element.offsetWidth + 10);
                     }
 
                     resize();
