@@ -20,7 +20,7 @@ angular.module('angular-advanced-searchbox', [])
                 placeholder: '@'
             },
             replace: true,
-            templateUrl: 'angular-advanced-searchbox.html',
+            templateUrl: 'src/angular-advanced-searchbox.html',
             controller: [
                 '$scope', '$attrs', '$element', '$timeout', '$filter',
                 function ($scope, $attrs, $element, $timeout, $filter) {
@@ -64,13 +64,25 @@ angular.module('angular-advanced-searchbox', [])
 
                     $scope.$watch('focus', function(newValue, oldValue) {
                         if (newValue == true){
-                            console.log('yes, thats ok');
                             var position = document.activeElement.getBoundingClientRect();
                             document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.top + position.height + 10) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.left = position.left + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
                         }
                     });
+
+                    $scope.focusSearchBox = function() {
+                        if($scope.focus) {
+                            return;
+                        }
+
+                        $scope.setSearchFocus = true;
+                    };
+
+                    $scope.isActiveBox = function() {
+                        var activeItems = $filter('filter')($scope.searchParams, function (param) { return param.editMode === true; });
+                        return $scope.focus || activeItems.length != 0
+                    };
 
                     $scope.searchParamValueChanged = function (param) {
                         updateModel('change', param.key, param.value);
@@ -106,7 +118,7 @@ angular.module('angular-advanced-searchbox', [])
                         updateModel('delete', 'query');
                     };
 
-                    $scope.isUnsedParameter = function (value, index) {
+                    $scope.isUnusedParameter = function (value, index) {
                         return $filter('filter')($scope.searchParams, function (param) { return param.key === value.key; }).length === 0;
                     };
 
@@ -114,7 +126,7 @@ angular.module('angular-advanced-searchbox', [])
                         if (enterEditModel === undefined)
                             enterEditModel = true;
 
-                        if (!$scope.isUnsedParameter(searchParam))
+                        if (!$scope.isUnusedParameter(searchParam))
                             return;
 
                         $scope.searchParams.push(
@@ -300,7 +312,6 @@ angular.module('angular-advanced-searchbox', [])
                     model: '=ngModel'
                 },
                 link: function($scope, $element, $attrs) {
-                    var container = angular.element('<div style="position: fixed; top: -9999px; left: 0;"></div>');
                     var element = document.createElement('span');
                     element.style.whiteSpace = 'pre';
 
@@ -315,8 +326,6 @@ angular.module('angular-advanced-searchbox', [])
                     ], function(css) {
                         element.style[css] = $element.css(css);
                     });
-
-                    angular.element(document).find('body').append(container.append(element));
 
                     function resize() {
                         element.textContent = $element.val() || $element.attr('placeholder');
