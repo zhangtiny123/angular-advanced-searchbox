@@ -83,28 +83,25 @@
             outline: none;
         }
 
+.suggest-drop-down {
+    display: block;
+    position: absolute;
+    z-index: 20000;
+    background-color: #444;
+    border-radius: 4px;
+}
 
+.suggest-drop-down ul {
+    list-style: none;
+    padding: 0;
+}
 
-    .advancedSearchBox .search-parameter-suggestions {
-        cursor: auto;
-        display: block;
-    }
+.suggest-drop-down ul li {
+    padding: 5px 10px 5px 10px;
+    color: white;
+}
 
-        .advancedSearchBox .search-parameter-suggestions .title {
-            display: block;
-            float: left;
-            height: 25px;
-            margin: 7px 7px 0 0;
-            background-color: transparent;
-            color: #888;
-            font-weight: bold;
-            padding: 0 5px;
-            font-size: 14px;
-            line-height: 25px;
-        }
-
-        .advancedSearchBox .search-parameter-suggestions .search-parameter {
-            cursor: pointer;
-            background-color: #bdbdbd;
-            color: #fff;
-        }
+.suggest-drop-down ul li:hover {
+    background-color: olivedrab;
+    cursor: pointer;
+}

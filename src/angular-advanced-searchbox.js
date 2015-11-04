@@ -62,6 +62,16 @@ angular.module('angular-advanced-searchbox', [])
                         });
                     }, true);
 
+                    $scope.$watch('focus', function(newValue, oldValue) {
+                        if (newValue == true){
+                            console.log('yes, thats ok');
+                            var position = document.activeElement.getBoundingClientRect();
+                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.top + position.height + 10) + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.left = position.left + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
+                        }
+                    });
+
                     $scope.searchParamValueChanged = function (param) {
                         updateModel('change', param.key, param.value);
                     };
