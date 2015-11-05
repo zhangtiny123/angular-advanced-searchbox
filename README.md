@@ -3,6 +3,22 @@
 
 A directive for AngularJS providing a advanced visual search box.
 
+### UPDATE
+**1. update the UI style**
+**2. change the data structure of ngModel**
+
+- DATA STRUCTURE
+
+```
+ngModel: {
+    name: [{id: 'id1', value: 'name1'},...],
+    query: ['value']
+}
+```
+
+**NOW you can select same param more one time!**
+
+
 ### [DEMO](http://dnauck.github.io/angular-advanced-searchbox/)
 
 ### Usage
