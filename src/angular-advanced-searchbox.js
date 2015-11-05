@@ -172,6 +172,7 @@ angular.module('angular-advanced-searchbox', [])
                             name: searchParam.name,
                             placeholder: searchParam.placeholder,
                             value: value || '',
+                            suggestions: searchParam.suggestions,
                             editMode: enterEditModel
                         };
                         $scope.searchParams.push(newItem);

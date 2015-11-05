@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
 
     <script type="application/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="application/javascript" src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script type="application/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script type="application/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
     <script type="application/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="application/javascript" src="src/angular-advanced-searchbox.js"></script>
@@ -28,11 +30,11 @@
             $scope.sometext = "world1";
 
             $scope.availableSearchParams = [
-                { key: "name", name: "Name", placeholder: "Name..." },
-                { key: "city", name: "City", placeholder: "City..." },
-                { key: "country", name: "Country", placeholder: "Country..." },
-                { key: "emailAddress", name: "E-Mail", placeholder: "E-Mail..." },
-                { key: "job", name: "Job", placeholder: "Job..." }
+                { key: "name", name: "Name", placeholder: "Name...", suggestions: ['tony', 'windy', 'ada', 'towns', 'tiny'] },
+                { key: "city", name: "City", placeholder: "City...", suggestions: ['Shanghai', 'Beijing', 'Chengdu', 'Chicago', 'Sydney'] },
+                { key: "country", name: "Country", placeholder: "Country...", suggestions: ['China', 'America', 'Australia', 'Canada'] },
+                { key: "emailAddress", name: "E-Mail", placeholder: "E-Mail...", suggestions: ['hello@gmail.com', 'shit@gmail.com', 'sheep@qq.com', 'hus@qq.com'] },
+                { key: "job", name: "Job", placeholder: "Job...", sugesstions: ['Engineer', 'worker', 'driver', 'doctor', 'teacher'] }
             ];
         })
     </script>
