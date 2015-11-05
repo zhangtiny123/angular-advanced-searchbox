@@ -36,7 +36,7 @@ angular.module('angular-advanced-searchbox', [])
                     function IDGenerator() {
 
                         this.length = 8;
-                        this.timestamp = +new Date;
+                        this.timestamp = +new Date();
 
                         var _getRandomInt = function( min, max ) {
                             return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
@@ -53,7 +53,7 @@ angular.module('angular-advanced-searchbox', [])
                             }
 
                             return id;
-                        }
+                        };
                     }
 
                     function updateModel2SearchParams() {
@@ -98,7 +98,7 @@ angular.module('angular-advanced-searchbox', [])
                     }, true);
 
                     $scope.$watch('focus', function(newValue, oldValue) {
-                        if (newValue == true){
+                        if (newValue === true){
                             var position = document.activeElement.getBoundingClientRect();
                             document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.top + position.height + 10) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.left = position.left + 'px';
@@ -116,7 +116,7 @@ angular.module('angular-advanced-searchbox', [])
 
                     $scope.isActiveBox = function() {
                         var activeItems = $filter('filter')($scope.searchParams, function (param) { return param.editMode === true; });
-                        return $scope.focus || activeItems.length != 0
+                        return $scope.focus || activeItems.length !== 0;
                     };
 
                     $scope.searchParamValueChanged = function (param) {
@@ -282,7 +282,7 @@ angular.module('angular-advanced-searchbox', [])
                             angular.forEach(changeBuffer, function (change) {
                                 if(change.command === 'delete') {
                                     if (change.key === 'query') {
-                                        $scope.model[change.key] = []
+                                        $scope.model[change.key] = [];
                                     }
                                     else {
                                         $scope.model[change.key] = $filter('filter')($scope.model[change.key], function (i) { return i.id !== change.item.id; });
