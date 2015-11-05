@@ -20,7 +20,7 @@ angular.module('angular-advanced-searchbox', [])
                 placeholder: '@'
             },
             replace: true,
-            templateUrl: 'angular-advanced-searchbox.html',
+            templateUrl: 'src/angular-advanced-searchbox.html',
             controller: [
                 '$scope', '$attrs', '$element', '$timeout', '$filter',
                 function ($scope, $attrs, $element, $timeout, $filter) {
@@ -31,27 +31,62 @@ angular.module('angular-advanced-searchbox', [])
                     $scope.setSearchFocus = false;
                     var searchThrottleTimer;
                     var changeBuffer = [];
+                    var generator = new IDGenerator();
+
+                    function IDGenerator() {
+
+                        this.length = 8;
+                        this.timestamp = +new Date();
+
+                        var _getRandomInt = function( min, max ) {
+                            return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+                        };
+
+                        this.generate = function() {
+                            var ts = this.timestamp.toString();
+                            var parts = ts.split( "" ).reverse();
+                            var id = "";
+
+                            for( var i = 0; i < this.length; ++i ) {
+                                var index = _getRandomInt( 0, parts.length - 1 );
+                                id += parts[index];
+                            }
+
+                            return id;
+                        };
+                    }
+
+                    function updateModel2SearchParams() {
+                        angular.forEach($scope.model, function (itemArray, key) {
+                            if (key === 'query' && $scope.searchQuery !== itemArray[0]) {
+                                $scope.searchQuery = itemArray[0];
+                            } else {
+                                var paramTemplate = $filter('filter')($scope.parameters, function (param) { return param.key === key; })[0];
+                                var theSearchParams = $filter('filter')($scope.searchParams, function (param) { return param.key === key; });
+
+                                if (paramTemplate !== undefined) {
+                                    angular.forEach (itemArray, function(item) {
+                                        var findResult = $filter('filter')(theSearchParams, function (param) {
+                                            return param.id === item.id;
+                                        })[0];
+                                        if (findResult === undefined) {
+                                            $scope.addSearchParam(paramTemplate, item, false);
+                                        }
+                                        else if (findResult !== undefined && findResult.value !== item.value) {
+                                            findResult.value = item.value;
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
 
                     $scope.$watch('model', function (newValue, oldValue) {
 
                         if(angular.equals(newValue, oldValue))
                             return;
 
-                        angular.forEach($scope.model, function (value, key) {
-                            if (key === 'query' && $scope.searchQuery !== value) {
-                                $scope.searchQuery = value;
-                            } else {
-                                var paramTemplate = $filter('filter')($scope.parameters, function (param) { return param.key === key; })[0];
-                                var searchParam = $filter('filter')($scope.searchParams, function (param) { return param.key === key; })[0];
-
-                                if (paramTemplate !== undefined) {
-                                    if(searchParam === undefined)
-                                        $scope.addSearchParam(paramTemplate, value, false);
-                                    else if (searchParam.value !== value )
-                                        searchParam.value = value;
-                                }
-                            }
-                        });
+                        updateModel2SearchParams();
 
                         // delete not existing search parameters from internal state array
                         angular.forEach($scope.searchParams, function (value, key){
@@ -62,12 +97,38 @@ angular.module('angular-advanced-searchbox', [])
                         });
                     }, true);
 
+                    $scope.$watch('focus', function(newValue, oldValue) {
+                        if (newValue === true){
+                            var position = document.activeElement.getBoundingClientRect();
+                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.top + position.height + 10) + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.left = position.left + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
+                        }
+                    });
+
+                    $scope.focusSearchBox = function() {
+                        if($scope.focus) {
+                            return;
+                        }
+
+                        $scope.setSearchFocus = true;
+                    };
+
+                    $scope.isActiveBox = function() {
+                        var activeItems = $filter('filter')($scope.searchParams, function (param) { return param.editMode === true; });
+                        return $scope.focus || activeItems.length !== 0;
+                    };
+
                     $scope.searchParamValueChanged = function (param) {
-                        updateModel('change', param.key, param.value);
+                        updateModel('change', param);
                     };
 
                     $scope.searchQueryChanged = function (query) {
-                        updateModel('change', 'query', query);
+                        var queryParam = {
+                            key: 'query',
+                            value: query
+                        };
+                        updateModel('change', queryParam);
                     };
 
                     $scope.enterEditMode = function(index) {
@@ -84,6 +145,7 @@ angular.module('angular-advanced-searchbox', [])
 
                         var searchParam = $scope.searchParams[index];
                         searchParam.editMode = false;
+                        updateModel('change', searchParam);
 
                         // remove empty search params
                         if (!searchParam.value)
@@ -93,31 +155,29 @@ angular.module('angular-advanced-searchbox', [])
                     $scope.typeaheadOnSelect = function (item, model, label) {
                         $scope.addSearchParam(item);
                         $scope.searchQuery = '';
-                        updateModel('delete', 'query');
-                    };
-
-                    $scope.isUnsedParameter = function (value, index) {
-                        return $filter('filter')($scope.searchParams, function (param) { return param.key === value.key; }).length === 0;
+                        var dqParam = {
+                            key: 'query',
+                            value: null
+                        };
+                        updateModel('delete', dqParam);
                     };
 
                     $scope.addSearchParam = function (searchParam, value, enterEditModel) {
                         if (enterEditModel === undefined)
                             enterEditModel = true;
 
-                        if (!$scope.isUnsedParameter(searchParam))
-                            return;
+                        var newItem = {
+                            id: generator.generate(),
+                            key: searchParam.key,
+                            name: searchParam.name,
+                            placeholder: searchParam.placeholder,
+                            value: value || '',
+                            suggestions: searchParam.suggestions,
+                            editMode: enterEditModel
+                        };
+                        $scope.searchParams.push(newItem);
 
-                        $scope.searchParams.push(
-                            {
-                                key: searchParam.key,
-                                name: searchParam.name,
-                                placeholder: searchParam.placeholder,
-                                value: value || '',
-                                editMode: enterEditModel
-                            }
-                        );
-
-                        updateModel('add', searchParam.key, value);
+                        updateModel('add', newItem);
                     };
 
                     $scope.removeSearchParam = function (index) {
@@ -127,7 +187,7 @@ angular.module('angular-advanced-searchbox', [])
                         var searchParam = $scope.searchParams[index];
                         $scope.searchParams.splice(index, 1);
 
-                        updateModel('delete', searchParam.key);
+                        updateModel('delete', searchParam);
                     };
 
                     $scope.removeAll = function() {
@@ -196,43 +256,54 @@ angular.module('angular-advanced-searchbox', [])
                         }
                     };
 
-                    function restoreModel() {
-                        angular.forEach($scope.model, function (value, key) {
-                            if (key === 'query') {
-                                $scope.searchQuery = value;
-                            } else {
-                                var searchParam = $filter('filter')($scope.parameters, function (param) { return param.key === key; })[0];
-                                if (searchParam !== undefined)
-                                    $scope.addSearchParam(searchParam, value, false);
-                            }
-                        });
-                    }
-
                     if ($scope.model === undefined) {
                         $scope.model = {};
                     } else {
-                        restoreModel();
+                        updateModel2SearchParams();
                     }
 
-                    function updateModel(command, key, value) {
+                    function updateModel(command, searchParam) {
                         if (searchThrottleTimer)
                             $timeout.cancel(searchThrottleTimer);
 
                         // remove all previous entries to the same search key that was not handled yet
-                        changeBuffer = $filter('filter')(changeBuffer, function (change) { return change.key !== key; });
+                        changeBuffer = $filter('filter')(changeBuffer, function (change) { return change.key !== searchParam.key; });
                         // add new change to list
                         changeBuffer.push({
                             command: command,
-                            key: key,
-                            value: value
+                            key: searchParam.key,
+                            item: {
+                                id: searchParam.id || null,
+                                value: searchParam.value
+                            }
                         });
 
                         searchThrottleTimer = $timeout(function () {
                             angular.forEach(changeBuffer, function (change) {
-                                if(change.command === 'delete')
-                                    delete $scope.model[change.key];
-                                else
-                                    $scope.model[change.key] = change.value;
+                                if(change.command === 'delete') {
+                                    if (change.key === 'query') {
+                                        $scope.model[change.key] = [];
+                                    }
+                                    else {
+                                        $scope.model[change.key] = $filter('filter')($scope.model[change.key], function (i) { return i.id !== change.item.id; });
+                                    }
+                                }
+                                else if (change.command === 'add') {
+                                    if ($scope.model[change.key] === undefined) {
+                                        $scope.model[change.key] = [];
+                                    }
+                                    $scope.model[change.key].push(change.item);
+                                }
+                                else if (change.command === 'change') {
+                                    if (change.key === 'query') {
+                                        $scope.model[change.key] = [];
+                                        $scope.model[change.key].push(change.item.value);
+                                    }
+                                    else {
+                                        var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
+                                        target.value = change.item.value;
+                                    }
+                                }
                             });
 
                             changeBuffer.length = 0;
@@ -290,8 +361,8 @@ angular.module('angular-advanced-searchbox', [])
                     model: '=ngModel'
                 },
                 link: function($scope, $element, $attrs) {
-                    var container = angular.element('<div style="position: fixed; top: -9999px; left: 0px;"></div>');
-                    var shadow = angular.element('<span style="white-space:pre;"></span>');
+                    var element = document.createElement('span');
+                    element.style.whiteSpace = 'pre';
 
                     var maxWidth = $element.css('maxWidth') === 'none' ? $element.parent().innerWidth() : $element.css('maxWidth');
                     $element.css('maxWidth', maxWidth);
@@ -302,14 +373,12 @@ angular.module('angular-advanced-searchbox', [])
                         'boxSizing', 'borderLeftWidth', 'borderRightWidth', 'borderLeftStyle', 'borderRightStyle',
                         'paddingLeft', 'paddingRight', 'marginLeft', 'marginRight'
                     ], function(css) {
-                        shadow.css(css, $element.css(css));
+                        element.style[css] = $element.css(css);
                     });
 
-                    angular.element('body').append(container.append(shadow));
-
                     function resize() {
-                        shadow.text($element.val() || $element.attr('placeholder'));
-                        $element.css('width', shadow.outerWidth() + 10);
+                        element.textContent = $element.val() || $element.attr('placeholder');
+                        $element.css('width', element.offsetWidth + 10);
                     }
 
                     resize();
@@ -329,7 +398,7 @@ angular.module('angular-advanced-searchbox').run(['$templateCache', function($te
   'use strict';
 
   $templateCache.put('angular-advanced-searchbox.html',
-    "<div class=advancedSearchBox ng-class={active:focus} ng-init=\"focus = false\" ng-click=\"!focus ? setSearchFocus = true : null\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div><div class=search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-trash\"></span></a><div class=key>{{searchParam.name}}:</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value}}</span> <input name=value nit-auto-size-input nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-blur=leaveEditMode($index) ng-if=searchParam.editMode ng-change=searchParamValueChanged(searchParam) ng-model=searchParam.value placeholder=\"{{searchParam.placeholder}}\"></div></div><input name=searchbox class=search-parameter-input nit-auto-size-input nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:isUnsedParameter | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div><div class=search-parameter-suggestions ng-show=\"parameters && focus\"><span class=title>Parameter Suggestions:</span> <span class=search-parameter ng-repeat=\"param in parameters | filter:isUnsedParameter | limitTo:8\" ng-mousedown=addSearchParam(param)>{{param.name}}</span></div></div>"
+    "<div><div class=advancedSearchBox ng-class=\"{active : isActiveBox()}\" ng-init=\"focus = false\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div class=search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-remove\"></span></a><div class=key ng-click=enterEditMode($index)>{{searchParam.name}} :</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value}}</span> <input name=value nit-auto-size-input nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-if=searchParam.editMode ng-change=searchParamValueChanged(searchParam) ng-model=searchParam.value typeahead=\"suggestion for suggestion in searchParam.suggestions | filter:$viewValue | limitTo:8\" placeholder=\"{{searchParam.placeholder}}\"></div></div><div class=search-input-container><input name=searchbox class=search-parameter-input ng-click=focusSearchBox() nit-auto-size-input nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div></div><div class=suggest-drop-down ng-show=\"parameters && focus && searchQuery == ''\"><ul><li ng-mousedown=addSearchParam(param) ng-repeat=\"param in parameters\">{{param.name}}</li></ul></div></div>"
   );
 
 }]);
