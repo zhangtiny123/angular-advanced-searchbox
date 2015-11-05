@@ -38,14 +38,14 @@
                    ng-focus="focus = true"
                    ng-blur="focus = false"
                    typeahead-on-select="typeaheadOnSelect($item, $model, $label)"
-                   typeahead="parameter as parameter.name for parameter in parameters | filter:isUnusedParameter | filter:{name:$viewValue} | limitTo:8"
+                   typeahead="parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8"
                    ng-change="searchQueryChanged(searchQuery)"
                    ng-model="searchQuery"/>
         </div>
     </div>
     <div class="suggest-drop-down" ng-show="parameters && focus && searchQuery == ''">
         <ul>
-            <li  ng-mousedown="addSearchParam(param)" ng-repeat="param in parameters | filter:isUnusedParameter | limitTo:8">
+            <li  ng-mousedown="addSearchParam(param)" ng-repeat="param in parameters">
                 {{param.name}}
             </li>
         </ul>

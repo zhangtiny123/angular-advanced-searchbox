@@ -162,16 +162,9 @@ angular.module('angular-advanced-searchbox', [])
                         updateModel('delete', dqParam);
                     };
 
-                    $scope.isUnusedParameter = function (value, index) {
-                        return $filter('filter')($scope.searchParams, function (param) { return param.key === value.key; }).length === 0;
-                    };
-
                     $scope.addSearchParam = function (searchParam, value, enterEditModel) {
                         if (enterEditModel === undefined)
                             enterEditModel = true;
-
-                        if (!$scope.isUnusedParameter(searchParam))
-                            return;
 
                         var newItem = {
                             id: generator.generate(),
