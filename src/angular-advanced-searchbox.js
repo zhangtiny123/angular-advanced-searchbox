@@ -100,8 +100,9 @@ angular.module('angular-advanced-searchbox', [])
                     $scope.$watch('focus', function(newValue, oldValue) {
                         if (newValue === true){
                             var position = document.activeElement.getBoundingClientRect();
-                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.top + position.height + 10) + 'px';
-                            document.getElementsByClassName('suggest-drop-down')[0].style.left = position.left + 'px';
+                            var grandPosition = document.activeElement.parentElement.parentElement.getBoundingClientRect();
+                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.height + 10) + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
                         }
                     });
@@ -361,6 +362,7 @@ angular.module('angular-advanced-searchbox', [])
                     model: '=ngModel'
                 },
                 link: function($scope, $element, $attrs) {
+                    var container = angular.element('<div style="position: fixed; top: -9999px; left: 0;"></div>');
                     var element = document.createElement('span');
                     element.style.whiteSpace = 'pre';
 
@@ -375,6 +377,8 @@ angular.module('angular-advanced-searchbox', [])
                     ], function(css) {
                         element.style[css] = $element.css(css);
                     });
+
+                    angular.element(document).find('body').append(container.append(element));
 
                     function resize() {
                         element.textContent = $element.val() || $element.attr('placeholder');
