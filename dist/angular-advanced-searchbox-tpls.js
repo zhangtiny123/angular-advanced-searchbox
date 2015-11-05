@@ -20,7 +20,7 @@ angular.module('angular-advanced-searchbox', [])
                 placeholder: '@'
             },
             replace: true,
-            templateUrl: 'src/angular-advanced-searchbox.html',
+            templateUrl: 'angular-advanced-searchbox.html',
             controller: [
                 '$scope', '$attrs', '$element', '$timeout', '$filter',
                 function ($scope, $attrs, $element, $timeout, $filter) {
