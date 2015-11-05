@@ -100,8 +100,9 @@ angular.module('angular-advanced-searchbox', [])
                     $scope.$watch('focus', function(newValue, oldValue) {
                         if (newValue === true){
                             var position = document.activeElement.getBoundingClientRect();
-                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.top + position.height + 10) + 'px';
-                            document.getElementsByClassName('suggest-drop-down')[0].style.left = position.left + 'px';
+                            var grandPosition = document.activeElement.parentElement.parentElement.getBoundingClientRect();
+                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.height + 10) + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
                         }
                     });
@@ -361,6 +362,7 @@ angular.module('angular-advanced-searchbox', [])
                     model: '=ngModel'
                 },
                 link: function($scope, $element, $attrs) {
+                    var container = angular.element('<div style="position: fixed; top: -9999px; left: 0;"></div>');
                     var element = document.createElement('span');
                     element.style.whiteSpace = 'pre';
 
@@ -375,6 +377,8 @@ angular.module('angular-advanced-searchbox', [])
                     ], function(css) {
                         element.style[css] = $element.css(css);
                     });
+
+                    angular.element(document).find('body').append(container.append(element));
 
                     function resize() {
                         element.textContent = $element.val() || $element.attr('placeholder');
@@ -398,7 +402,7 @@ angular.module('angular-advanced-searchbox').run(['$templateCache', function($te
   'use strict';
 
   $templateCache.put('angular-advanced-searchbox.html',
-    "<div><div class=advancedSearchBox ng-class=\"{active : isActiveBox()}\" ng-init=\"focus = false\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div class=search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-remove\"></span></a><div class=key ng-click=enterEditMode($index)>{{searchParam.name}} :</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value}}</span> <input name=value nit-auto-size-input nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-if=searchParam.editMode ng-change=searchParamValueChanged(searchParam) ng-model=searchParam.value typeahead=\"suggestion for suggestion in searchParam.suggestions | filter:$viewValue | limitTo:8\" placeholder=\"{{searchParam.placeholder}}\"></div></div><div class=search-input-container><input name=searchbox class=search-parameter-input ng-click=focusSearchBox() nit-auto-size-input nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div></div><div class=suggest-drop-down ng-show=\"parameters && focus && searchQuery == ''\"><ul><li ng-mousedown=addSearchParam(param) ng-repeat=\"param in parameters\">{{param.name}}</li></ul></div></div>"
+    "<div class=box-container><div class=advancedSearchBox ng-class=\"{active : isActiveBox()}\" ng-init=\"focus = false\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div class=search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-remove\"></span></a><div class=key ng-click=enterEditMode($index)>{{searchParam.name}} :</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value}}</span> <input name=value nit-auto-size-input nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-if=searchParam.editMode ng-change=searchParamValueChanged(searchParam) ng-model=searchParam.value typeahead=\"suggestion for suggestion in searchParam.suggestions | filter:$viewValue | limitTo:8\" placeholder=\"{{searchParam.placeholder}}\"></div></div><div class=search-input-container><input name=searchbox class=search-parameter-input ng-click=focusSearchBox() nit-auto-size-input nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div></div><div class=suggest-drop-down ng-show=\"parameters && focus && searchQuery == ''\"><ul><li ng-mousedown=addSearchParam(param) ng-repeat=\"param in parameters\">{{param.name}}</li></ul></div></div>"
   );
 
 }]);
