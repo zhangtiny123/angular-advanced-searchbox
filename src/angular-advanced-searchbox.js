@@ -101,7 +101,7 @@ angular.module('angular-advanced-searchbox', [])
                         if (newValue === true){
                             var position = document.activeElement.getBoundingClientRect();
                             var grandPosition = document.activeElement.parentElement.parentElement.getBoundingClientRect();
-                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.height + 10) + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (grandPosition.height) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
                         }
@@ -302,13 +302,14 @@ angular.module('angular-advanced-searchbox', [])
                                     }
                                     else {
                                         var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
-                                        target.value = change.item.value;
+                                        if (target)
+                                            target.value = change.item.value;
                                     }
                                 }
                             });
 
                             changeBuffer.length = 0;
-                        }, 500);
+                        }, 10);
                     }
 
                     function getCurrentCaretPosition(input) {
