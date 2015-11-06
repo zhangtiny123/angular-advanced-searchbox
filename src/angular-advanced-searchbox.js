@@ -281,30 +281,31 @@ angular.module('angular-advanced-searchbox', [])
 
                         searchThrottleTimer = $timeout(function () {
                             angular.forEach(changeBuffer, function (change) {
-                                if(change.command === 'delete') {
-                                    if (change.key === 'query') {
-                                        $scope.model[change.key] = [];
-                                    }
-                                    else {
-                                        $scope.model[change.key] = $filter('filter')($scope.model[change.key], function (i) { return i.id !== change.item.id; });
-                                    }
-                                }
-                                else if (change.command === 'add') {
-                                    if ($scope.model[change.key] === undefined) {
-                                        $scope.model[change.key] = [];
-                                    }
-                                    $scope.model[change.key].push(change.item);
-                                }
-                                else if (change.command === 'change') {
-                                    if (change.key === 'query') {
-                                        $scope.model[change.key] = [];
-                                        $scope.model[change.key].push(change.item.value);
-                                    }
-                                    else {
-                                        var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
-                                        if (target)
-                                            target.value = change.item.value;
-                                    }
+                                switch (change.command) {
+                                    case 'delete':
+                                        if (change.key === 'query') {
+                                            $scope.model[change.key] = [];
+                                        }
+                                        else {
+                                            $scope.model[change.key] = $filter('filter')($scope.model[change.key], function (i) { return i.id !== change.item.id; });
+                                        }
+                                        break;
+                                    case 'add':
+                                        if ($scope.model[change.key] === undefined) {
+                                            $scope.model[change.key] = [];
+                                        }
+                                        $scope.model[change.key].push(change.item);
+                                        break;
+                                    case 'change':
+                                        if (change.key === 'query') {
+                                            $scope.model[change.key] = [];
+                                            $scope.model[change.key].push(change.item.value);
+                                        }
+                                        else {
+                                            var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
+                                            if (target)
+                                                target.value = change.item.value;
+                                        }
                                 }
                             });
 
