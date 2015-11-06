@@ -101,7 +101,7 @@ angular.module('angular-advanced-searchbox', [])
                         if (newValue === true){
                             var position = document.activeElement.getBoundingClientRect();
                             var grandPosition = document.activeElement.parentElement.parentElement.getBoundingClientRect();
-                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (position.height + 10) + 'px';
+                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (grandPosition.height) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
                             document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
                         }
@@ -281,34 +281,36 @@ angular.module('angular-advanced-searchbox', [])
 
                         searchThrottleTimer = $timeout(function () {
                             angular.forEach(changeBuffer, function (change) {
-                                if(change.command === 'delete') {
-                                    if (change.key === 'query') {
-                                        $scope.model[change.key] = [];
-                                    }
-                                    else {
-                                        $scope.model[change.key] = $filter('filter')($scope.model[change.key], function (i) { return i.id !== change.item.id; });
-                                    }
-                                }
-                                else if (change.command === 'add') {
-                                    if ($scope.model[change.key] === undefined) {
-                                        $scope.model[change.key] = [];
-                                    }
-                                    $scope.model[change.key].push(change.item);
-                                }
-                                else if (change.command === 'change') {
-                                    if (change.key === 'query') {
-                                        $scope.model[change.key] = [];
-                                        $scope.model[change.key].push(change.item.value);
-                                    }
-                                    else {
-                                        var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
-                                        target.value = change.item.value;
-                                    }
+                                switch (change.command) {
+                                    case 'delete':
+                                        if (change.key === 'query') {
+                                            $scope.model[change.key] = [];
+                                        }
+                                        else {
+                                            $scope.model[change.key] = $filter('filter')($scope.model[change.key], function (i) { return i.id !== change.item.id; });
+                                        }
+                                        break;
+                                    case 'add':
+                                        if ($scope.model[change.key] === undefined) {
+                                            $scope.model[change.key] = [];
+                                        }
+                                        $scope.model[change.key].push(change.item);
+                                        break;
+                                    case 'change':
+                                        if (change.key === 'query') {
+                                            $scope.model[change.key] = [];
+                                            $scope.model[change.key].push(change.item.value);
+                                        }
+                                        else {
+                                            var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
+                                            if (target)
+                                                target.value = change.item.value;
+                                        }
                                 }
                             });
 
                             changeBuffer.length = 0;
-                        }, 500);
+                        }, 10);
                     }
 
                     function getCurrentCaretPosition(input) {
