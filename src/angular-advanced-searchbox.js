@@ -72,8 +72,8 @@ angular.module('angular-advanced-searchbox', [])
                                         if (findResult === undefined) {
                                             $scope.addSearchParam(paramTemplate, item, false);
                                         }
-                                        else if (findResult !== undefined && findResult.value !== item.value) {
-                                            findResult.value = item.value;
+                                        else if (findResult !== undefined && findResult.value.name !== item.value.name) {
+                                            findResult.value.name = item.value.name;
                                         }
                                     });
                                 }
@@ -149,7 +149,7 @@ angular.module('angular-advanced-searchbox', [])
                         updateModel('change', searchParam);
 
                         // remove empty search params
-                        if (!searchParam.value)
+                        if (!searchParam.value.name)
                             $scope.removeSearchParam(index);
                     };
 
@@ -172,7 +172,7 @@ angular.module('angular-advanced-searchbox', [])
                             key: searchParam.key,
                             name: searchParam.name,
                             placeholder: searchParam.placeholder,
-                            value: value || '',
+                            value: value || {},
                             suggestions: searchParam.suggestions,
                             editMode: enterEditModel
                         };
@@ -252,7 +252,7 @@ angular.module('angular-advanced-searchbox', [])
                                 $scope.editPrevious(searchParamIndex);
 
                         } else if (e.which == 39) { // right
-                            if (cursorPosition === e.target.value.length)
+                            if (cursorPosition === e.target.value.name.length)
                                 $scope.editNext(searchParamIndex);
                         }
                     };
@@ -299,12 +299,12 @@ angular.module('angular-advanced-searchbox', [])
                                     case 'change':
                                         if (change.key === 'query') {
                                             $scope.model[change.key] = [];
-                                            $scope.model[change.key].push(change.item.value);
+                                            $scope.model[change.key].push(change.item.value.name);
                                         }
                                         else {
                                             var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
                                             if (target)
-                                                target.value = change.item.value;
+                                                target.value.name = change.item.value.name;
                                         }
                                 }
                             });
@@ -325,7 +325,7 @@ angular.module('angular-advanced-searchbox', [])
                             input.focus();
                             var selection = document.selection.createRange();
                             var selectionLength = document.selection.createRange().text.length;
-                            selection.moveStart('character', -input.value.length);
+                            selection.moveStart('character', -input.value.name.length);
                             return selection.text.length - selectionLength;
                         }
 
