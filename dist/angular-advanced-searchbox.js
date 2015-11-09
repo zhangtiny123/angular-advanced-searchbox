@@ -107,6 +107,13 @@ angular.module('angular-advanced-searchbox', [])
                         }
                     });
 
+                    $scope.getMySuggestions = function(thisSearchParam, $viewValue) {
+                        if (!$viewValue) {
+                            return thisSearchParam.suggestions;
+                        }
+                        return $filter('filter')(thisSearchParam.suggestions, function (s) { return s.name.toLowerCase().indexOf($viewValue.toLowerCase()) !== 0; });
+                    };
+
                     $scope.focusSearchBox = function() {
                         if($scope.focus) {
                             return;
