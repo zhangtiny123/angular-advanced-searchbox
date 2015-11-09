@@ -23,7 +23,7 @@
                        ng-if="searchParam.editMode"
                        ng-change="searchParamValueChanged(searchParam)"
                        ng-model="searchParam.value"
-                       typeahead="suggestion as suggestion.name for suggestion in searchParam.suggestions | filter:{name:$viewValue} | limitTo:8"
+                       typeahead="suggestion for suggestion in searchParam.suggestions | filter:$viewValue | limitTo:8"
                        placeholder="{{searchParam.placeholder}}"/>
             </div>
         </div>
