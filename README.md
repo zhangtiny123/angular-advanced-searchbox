@@ -16,12 +16,6 @@ ngModel: {
 }
 ```
 
-suggestions: [
-    {name: '泰尼', key: 'Tiny'},
-    {name: '弗兰克', key: 'Frank'},
-    ...
-]
-
 **NOW you can select same param more one time!**
 
 
