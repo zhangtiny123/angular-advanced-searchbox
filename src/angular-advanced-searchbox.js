@@ -131,8 +131,8 @@ angular.module('angular-advanced-searchbox', [])
                         updateModel('change', param);
                     };
 
-                    $scope.itemOnSelect = function() {
-                        updateModel('change', arguments[0].searchParam);
+                    $scope.itemOnSelect = function(searchParam) {
+                        updateModel('change', searchParam);
                     };
 
                     $scope.searchQueryChanged = function (query) {
