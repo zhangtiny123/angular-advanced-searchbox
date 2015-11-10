@@ -286,7 +286,8 @@ angular.module('angular-advanced-searchbox', [])
                             key: searchParam.key,
                             item: {
                                 id: searchParam.id || null,
-                                value: searchParam.value
+                                value: searchParam.value,
+                                editMode: searchParam.editMode
                             }
                         });
 
@@ -314,8 +315,10 @@ angular.module('angular-advanced-searchbox', [])
                                         }
                                         else {
                                             var target = $filter('filter')($scope.model[change.key], function (i) { return i.id === change.item.id; })[0];
-                                            if (target)
+                                            if (target){
                                                 target.value = change.item.value;
+                                                target.editMode = change.item.editMode;
+                                            }
                                         }
                                 }
                             });
