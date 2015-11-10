@@ -21,7 +21,6 @@
                        nit-suggestion-click-open
                        nit-set-focus="searchParam.editMode"
                        ng-keydown="keydown($event, $index)"
-                       ng-if="searchParam.editMode"
                        ng-change="searchParamValueChanged(searchParam)"
                        ng-model="searchParam.value"
                        typeahead="suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)"
