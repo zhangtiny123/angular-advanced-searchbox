@@ -132,7 +132,7 @@ angular.module('angular-advanced-searchbox', [])
                     };
 
                     $scope.itemOnSelect = function() {
-                        updateModel('change', arguments[0].searchParam)
+                        updateModel('change', arguments[0].searchParam);
                     };
 
                     $scope.searchQueryChanged = function (query) {
