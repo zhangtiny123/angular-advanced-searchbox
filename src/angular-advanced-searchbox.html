@@ -24,6 +24,7 @@
                        ng-change="searchParamValueChanged(searchParam)"
                        ng-show="searchParam.editMode"
                        ng-model="searchParam.value"
+                       typeahead-on-select="itemOnSelect()"
                        typeahead="suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)"
                        placeholder="{{searchParam.placeholder}}"/>
             </div>
