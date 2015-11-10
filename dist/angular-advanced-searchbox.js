@@ -111,7 +111,7 @@ angular.module('angular-advanced-searchbox', [])
                         if (!$viewValue) {
                             return thisSearchParam.suggestions;
                         }
-                        return $filter('filter')(thisSearchParam.suggestions, function (s) { return s.name.toLowerCase().indexOf($viewValue.toLowerCase()) !== 0; });
+                        return $filter('filter')(thisSearchParam.suggestions, function (s) { return s.name.toLowerCase().indexOf($viewValue.toLowerCase()) !== -1; });
                     };
 
                     $scope.focusSearchBox = function() {
@@ -359,6 +359,24 @@ angular.module('angular-advanced-searchbox', [])
                     $element.bind('blur', function() {
                         $scope.$apply(model.assign($scope, false));
                     });
+                }
+            };
+        }
+    ])
+    .directive('nitSuggestionClickOpen', [
+        '$parse', function($parse) {
+            return {
+                restrict: 'A',
+                require: 'ngModel',
+                link: function($scope, elem, attrs) {
+                    var triggerFunc;
+                    triggerFunc = function(evt) {
+                        var ctrl, prev;
+                        ctrl = elem.controller('ngModel');
+                        prev = ctrl.$modelValue.key || '';
+                        return ctrl.$setViewValue(prev ? '' : ' ');
+                    };
+                    return elem.bind('click', triggerFunc);
                 }
             };
         }
