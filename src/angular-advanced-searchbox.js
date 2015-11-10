@@ -363,6 +363,24 @@ angular.module('angular-advanced-searchbox', [])
             };
         }
     ])
+    .directive('nitSuggestionClickOpen', [
+        '$parse', function($parse) {
+            return {
+                restrict: 'A',
+                require: 'ngModel',
+                link: function($scope, elem, attrs) {
+                    var triggerFunc;
+                    triggerFunc = function(evt) {
+                        var ctrl, prev;
+                        ctrl = elem.controller('ngModel');
+                        prev = ctrl.$modelValue.key || '';
+                        return ctrl.$setViewValue(prev ? '' : ' ');
+                    };
+                    return elem.bind('click', triggerFunc);
+                }
+            };
+        }
+    ])
     .directive('nitAutoSizeInput', [
         function() {
             return {
