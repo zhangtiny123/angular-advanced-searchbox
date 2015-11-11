@@ -149,7 +149,7 @@ angular.module('angular-advanced-searchbox', [])
 
                         var searchParam = $scope.searchParams[index];
                         searchParam.editMode = true;
-                        updateModel('change', searchParam)
+                        updateModel('change', searchParam);
                     };
 
                     $scope.leaveEditMode = function(index) {

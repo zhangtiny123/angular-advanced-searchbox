@@ -23,6 +23,7 @@
                        ng-keydown="keydown($event, $index)"
                        ng-change="searchParamValueChanged(searchParam)"
                        ng-show="searchParam.editMode"
+                       ng-blur="leaveEditMode($index)"
                        ng-model="searchParam.value"
                        typeahead-on-select="itemOnSelect(searchParam)"
                        typeahead="suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)"

@@ -149,6 +149,7 @@ angular.module('angular-advanced-searchbox', [])
 
                         var searchParam = $scope.searchParams[index];
                         searchParam.editMode = true;
+                        updateModel('change', searchParam);
                     };
 
                     $scope.leaveEditMode = function(index) {
@@ -160,7 +161,7 @@ angular.module('angular-advanced-searchbox', [])
                         updateModel('change', searchParam);
 
                         // remove empty search params
-                        if (!searchParam.value)
+                        if (searchParam.value.length === 0)
                             $scope.removeSearchParam(index);
                     };
 
@@ -378,10 +379,12 @@ angular.module('angular-advanced-searchbox', [])
                 link: function($scope, elem, attrs) {
                     var triggerFunc;
                     triggerFunc = function(evt) {
-                        var ctrl, prev;
-                        ctrl = elem.controller('ngModel');
-                        prev = ctrl.$modelValue.key || '';
-                        return ctrl.$setViewValue(prev ? '' : ' ');
+                        if(!elem[0].value) {
+                            var ctrl, prev;
+                            ctrl = elem.controller('ngModel');
+                            prev = ctrl.$modelValue.key || '';
+                            return ctrl.$setViewValue(prev ? '' : ' ');
+                        }
                     };
                     return elem.bind('click', triggerFunc);
                 }
@@ -436,7 +439,7 @@ angular.module('angular-advanced-searchbox').run(['$templateCache', function($te
   'use strict';
 
   $templateCache.put('angular-advanced-searchbox.html',
-    "<div class=box-container><div class=advancedSearchBox ng-class=\"{active : isActiveBox()}\" ng-init=\"focus = false\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div class=search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-remove\"></span></a><div class=key ng-click=enterEditMode($index)>{{searchParam.name}} :</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value.name || searchParam.value}}</span> <input name=value nit-auto-size-input nit-suggestion-click-open nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-change=searchParamValueChanged(searchParam) ng-show=searchParam.editMode ng-model=searchParam.value typeahead-on-select=itemOnSelect(searchParam) typeahead=\"suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)\" placeholder=\"{{searchParam.placeholder}}\"></div></div><div class=search-input-container><input name=searchbox class=search-parameter-input ng-click=focusSearchBox() nit-auto-size-input nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div></div><div class=suggest-drop-down ng-show=\"parameters && focus && searchQuery == ''\"><ul><li ng-mousedown=addSearchParam(param) ng-repeat=\"param in parameters\">{{param.name}}</li></ul></div></div>"
+    "<div class=box-container><div class=advancedSearchBox ng-class=\"{active : isActiveBox()}\" ng-init=\"focus = false\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div class=search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-remove\"></span></a><div class=key ng-click=enterEditMode($index)>{{searchParam.name}} :</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value.name || searchParam.value}}</span> <input name=value nit-auto-size-input nit-suggestion-click-open nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-change=searchParamValueChanged(searchParam) ng-show=searchParam.editMode ng-blur=leaveEditMode($index) ng-model=searchParam.value typeahead-on-select=itemOnSelect(searchParam) typeahead=\"suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)\" placeholder=\"{{searchParam.placeholder}}\"></div></div><div class=search-input-container><input name=searchbox class=search-parameter-input ng-click=focusSearchBox() nit-auto-size-input nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div></div><div class=suggest-drop-down ng-show=\"parameters && focus && searchQuery == ''\"><ul><li ng-mousedown=addSearchParam(param) ng-repeat=\"param in parameters\">{{param.name}}</li></ul></div></div>"
   );
 
 }]);
