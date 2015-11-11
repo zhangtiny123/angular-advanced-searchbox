@@ -149,6 +149,7 @@ angular.module('angular-advanced-searchbox', [])
 
                         var searchParam = $scope.searchParams[index];
                         searchParam.editMode = true;
+                        updateModel('change', searchParam)
                     };
 
                     $scope.leaveEditMode = function(index) {
@@ -160,7 +161,7 @@ angular.module('angular-advanced-searchbox', [])
                         updateModel('change', searchParam);
 
                         // remove empty search params
-                        if (!searchParam.value)
+                        if (searchParam.value.length === 0)
                             $scope.removeSearchParam(index);
                     };
 
@@ -378,10 +379,12 @@ angular.module('angular-advanced-searchbox', [])
                 link: function($scope, elem, attrs) {
                     var triggerFunc;
                     triggerFunc = function(evt) {
-                        var ctrl, prev;
-                        ctrl = elem.controller('ngModel');
-                        prev = ctrl.$modelValue.key || '';
-                        return ctrl.$setViewValue(prev ? '' : ' ');
+                        if(!elem[0].value) {
+                            var ctrl, prev;
+                            ctrl = elem.controller('ngModel');
+                            prev = ctrl.$modelValue.key || '';
+                            return ctrl.$setViewValue(prev ? '' : ' ');
+                        }
                     };
                     return elem.bind('click', triggerFunc);
                 }
