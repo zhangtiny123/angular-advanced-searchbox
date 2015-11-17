@@ -102,9 +102,10 @@ angular.module('angular-advanced-searchbox', [])
                         mainInput.minWidth = 120;
                         var parentWidth = mainInput.parentElement.getBoundingClientRect().width;
                         var ParamLabels = document.getElementsByClassName('nit-search-parameter');
+                        var calculatedWidth = 0;
                         if (ParamLabels.length > 0) {
                             var lastLabel = ParamLabels[ParamLabels.length - 1].getBoundingClientRect();
-                            var calculatedWidth = (parentWidth - lastLabel.left - lastLabel.width - 67);
+                            calculatedWidth = (parentWidth - lastLabel.left - lastLabel.width - 67);
                         }
 
                         if (calculatedWidth && calculatedWidth >= mainInput.minWidth) {

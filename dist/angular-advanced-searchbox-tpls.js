@@ -97,13 +97,32 @@ angular.module('angular-advanced-searchbox', [])
                         });
                     }, true);
 
+                    function resizeMainInput() {
+                        var mainInput = document.getElementsByClassName('nit-search-parameter-input')[0];
+                        mainInput.minWidth = 120;
+                        var parentWidth = mainInput.parentElement.getBoundingClientRect().width;
+                        var ParamLabels = document.getElementsByClassName('nit-search-parameter');
+                        var calculatedWidth = 0;
+                        if (ParamLabels.length > 0) {
+                            var lastLabel = ParamLabels[ParamLabels.length - 1].getBoundingClientRect();
+                            calculatedWidth = (parentWidth - lastLabel.left - lastLabel.width - 67);
+                        }
+
+                        if (calculatedWidth && calculatedWidth >= mainInput.minWidth) {
+                            mainInput.style.width = calculatedWidth + 'px';
+                        }
+                        else {
+                            mainInput.style.width = (parentWidth - 60) + 'px';
+                        }
+                    }
+
                     $scope.$watch('focus', function(newValue, oldValue) {
                         if (newValue === true){
                             var position = document.activeElement.getBoundingClientRect();
                             var grandPosition = document.activeElement.parentElement.parentElement.getBoundingClientRect();
-                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (grandPosition.height) + 'px';
-                            document.getElementsByClassName('suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
-                            document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
+                            document.getElementsByClassName('nit-suggest-drop-down')[0].style.top = (grandPosition.height) + 'px';
+                            document.getElementsByClassName('nit-suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
+                            document.getElementsByClassName('nit-suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
                         }
                     });
 
@@ -149,6 +168,8 @@ angular.module('angular-advanced-searchbox', [])
 
                         var searchParam = $scope.searchParams[index];
                         searchParam.editMode = true;
+
+                         $timeout(resizeMainInput, 50);
                         updateModel('change', searchParam);
                     };
 
@@ -163,6 +184,8 @@ angular.module('angular-advanced-searchbox', [])
                         // remove empty search params
                         if (searchParam.value.length === 0)
                             $scope.removeSearchParam(index);
+
+                         $timeout(resizeMainInput, 50);
                     };
 
                     $scope.typeaheadOnSelect = function (item, model, label) {
@@ -190,6 +213,8 @@ angular.module('angular-advanced-searchbox', [])
                         };
                         $scope.searchParams.push(newItem);
 
+                        document.getElementsByClassName('nit-search-parameter-input')[0].style.width = 50 + 'px';
+                        $timeout(resizeMainInput, 50);
                         updateModel('add', newItem);
                     };
 
@@ -200,6 +225,7 @@ angular.module('angular-advanced-searchbox', [])
                         var searchParam = $scope.searchParams[index];
                         $scope.searchParams.splice(index, 1);
 
+                         $timeout(resizeMainInput, 50);
                         updateModel('delete', searchParam);
                     };
 
@@ -208,6 +234,7 @@ angular.module('angular-advanced-searchbox', [])
                         $scope.searchQuery = '';
                         
                         $scope.model = {};
+                         $timeout(resizeMainInput, 50);
                     };
 
                     $scope.editPrevious = function(currentIndex) {
@@ -439,7 +466,7 @@ angular.module('angular-advanced-searchbox').run(['$templateCache', function($te
   'use strict';
 
   $templateCache.put('angular-advanced-searchbox.html',
-    "<div class=box-container><div class=advancedSearchBox ng-class=\"{active : isActiveBox()}\" ng-init=\"focus = false\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div class=search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-remove\"></span></a><div class=key ng-click=enterEditMode($index)>{{searchParam.name}} :</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value.name || searchParam.value}}</span> <input name=value nit-auto-size-input nit-suggestion-click-open nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-change=searchParamValueChanged(searchParam) ng-show=searchParam.editMode ng-blur=leaveEditMode($index) ng-model=searchParam.value typeahead-on-select=itemOnSelect(searchParam) typeahead=\"suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)\" placeholder=\"{{searchParam.placeholder}}\"></div></div><div class=search-input-container><input name=searchbox class=search-parameter-input ng-click=focusSearchBox() nit-auto-size-input nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div></div><div class=suggest-drop-down ng-show=\"parameters && focus && searchQuery == ''\"><ul><li ng-mousedown=addSearchParam(param) ng-repeat=\"param in parameters\">{{param.name}}</li></ul></div></div>"
+    "<div class=box-container><div class=advancedSearchBox ng-class=\"{active : isActiveBox()}\" ng-init=\"focus = false\"><span ng-show=\"searchParams.length < 1 && searchQuery.length === 0\" class=\"search-icon glyphicon glyphicon-search\"></span> <a ng-href=\"\" ng-show=\"searchParams.length > 0 || searchQuery.length > 0\" ng-click=removeAll() role=button><span class=\"remove-all-icon glyphicon glyphicon-trash\"></span></a><div class=nit-search-parameter ng-repeat=\"searchParam in searchParams\"><a ng-href=\"\" ng-click=removeSearchParam($index) role=button><span class=\"remove glyphicon glyphicon-remove\"></span></a><div class=key ng-click=enterEditMode($index)>{{searchParam.name}} :</div><div class=value><span ng-if=!searchParam.editMode ng-click=enterEditMode($index)>{{searchParam.value.name || searchParam.value}}</span> <input name=value nit-auto-size-input nit-suggestion-click-open nit-set-focus=searchParam.editMode ng-keydown=\"keydown($event, $index)\" ng-change=searchParamValueChanged(searchParam) ng-show=searchParam.editMode ng-blur=leaveEditMode($index) ng-model=searchParam.value typeahead-on-select=itemOnSelect(searchParam) typeahead=\"suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)\" placeholder=\"{{searchParam.placeholder}}\"></div></div><input name=searchbox class=nit-search-parameter-input ng-click=focusSearchBox() nit-set-focus=setSearchFocus ng-keydown=keydown($event) placeholder={{placeholder}} ng-focus=\"focus = true\" ng-blur=\"focus = false\" typeahead-on-select=\"typeaheadOnSelect($item, $model, $label)\" typeahead=\"parameter as parameter.name for parameter in parameters | filter:{name:$viewValue} | limitTo:8\" ng-change=searchQueryChanged(searchQuery) ng-model=\"searchQuery\"></div><div class=nit-suggest-drop-down ng-show=\"parameters && focus && searchQuery == ''\"><ul><li ng-mousedown=addSearchParam(param) ng-repeat=\"param in parameters\">{{param.name}}</li></ul></div></div>"
   );
 
 }]);

@@ -97,13 +97,32 @@ angular.module('angular-advanced-searchbox', [])
                         });
                     }, true);
 
+                    function resizeMainInput() {
+                        var mainInput = document.getElementsByClassName('nit-search-parameter-input')[0];
+                        mainInput.minWidth = 120;
+                        var parentWidth = mainInput.parentElement.getBoundingClientRect().width;
+                        var ParamLabels = document.getElementsByClassName('nit-search-parameter');
+                        var calculatedWidth = 0;
+                        if (ParamLabels.length > 0) {
+                            var lastLabel = ParamLabels[ParamLabels.length - 1].getBoundingClientRect();
+                            calculatedWidth = (parentWidth - lastLabel.left - lastLabel.width - 67);
+                        }
+
+                        if (calculatedWidth && calculatedWidth >= mainInput.minWidth) {
+                            mainInput.style.width = calculatedWidth + 'px';
+                        }
+                        else {
+                            mainInput.style.width = (parentWidth - 60) + 'px';
+                        }
+                    }
+
                     $scope.$watch('focus', function(newValue, oldValue) {
                         if (newValue === true){
                             var position = document.activeElement.getBoundingClientRect();
                             var grandPosition = document.activeElement.parentElement.parentElement.getBoundingClientRect();
-                            document.getElementsByClassName('suggest-drop-down')[0].style.top = (grandPosition.height) + 'px';
-                            document.getElementsByClassName('suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
-                            document.getElementsByClassName('suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
+                            document.getElementsByClassName('nit-suggest-drop-down')[0].style.top = (grandPosition.height) + 'px';
+                            document.getElementsByClassName('nit-suggest-drop-down')[0].style.left = (position.left - grandPosition.left) + 'px';
+                            document.getElementsByClassName('nit-suggest-drop-down')[0].style.maxHeight = (window.innerHeight - position.height - 10) + 'px';
                         }
                     });
 
@@ -149,6 +168,8 @@ angular.module('angular-advanced-searchbox', [])
 
                         var searchParam = $scope.searchParams[index];
                         searchParam.editMode = true;
+
+                         $timeout(resizeMainInput, 50);
                         updateModel('change', searchParam);
                     };
 
@@ -163,6 +184,8 @@ angular.module('angular-advanced-searchbox', [])
                         // remove empty search params
                         if (searchParam.value.length === 0)
                             $scope.removeSearchParam(index);
+
+                         $timeout(resizeMainInput, 50);
                     };
 
                     $scope.typeaheadOnSelect = function (item, model, label) {
@@ -190,6 +213,8 @@ angular.module('angular-advanced-searchbox', [])
                         };
                         $scope.searchParams.push(newItem);
 
+                        document.getElementsByClassName('nit-search-parameter-input')[0].style.width = 50 + 'px';
+                        $timeout(resizeMainInput, 50);
                         updateModel('add', newItem);
                     };
 
@@ -200,6 +225,7 @@ angular.module('angular-advanced-searchbox', [])
                         var searchParam = $scope.searchParams[index];
                         $scope.searchParams.splice(index, 1);
 
+                         $timeout(resizeMainInput, 50);
                         updateModel('delete', searchParam);
                     };
 
@@ -208,6 +234,7 @@ angular.module('angular-advanced-searchbox', [])
                         $scope.searchQuery = '';
                         
                         $scope.model = {};
+                         $timeout(resizeMainInput, 50);
                     };
 
                     $scope.editPrevious = function(currentIndex) {
