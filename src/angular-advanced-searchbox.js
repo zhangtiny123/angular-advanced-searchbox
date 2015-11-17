@@ -100,19 +100,19 @@ angular.module('angular-advanced-searchbox', [])
                     function resizeMainInput() {
                         var mainInput = document.getElementsByClassName('nit-search-parameter-input')[0];
                         mainInput.minWidth = 120;
-                        var parentWidth = mainInput.parentElement.getBoundingClientRect().width;
+                        var parentRect = mainInput.parentElement.getBoundingClientRect();
                         var ParamLabels = document.getElementsByClassName('nit-search-parameter');
                         var calculatedWidth = 0;
                         if (ParamLabels.length > 0) {
                             var lastLabel = ParamLabels[ParamLabels.length - 1].getBoundingClientRect();
-                            calculatedWidth = (parentWidth - lastLabel.left - lastLabel.width - 67);
+                            calculatedWidth = (parentRect.width - (lastLabel.left + lastLabel.width - parentRect.left) - 67);
                         }
 
                         if (calculatedWidth && calculatedWidth >= mainInput.minWidth) {
                             mainInput.style.width = calculatedWidth + 'px';
                         }
                         else {
-                            mainInput.style.width = (parentWidth - 60) + 'px';
+                            mainInput.style.width = (parentRect.width - 60) + 'px';
                         }
                     }
 
