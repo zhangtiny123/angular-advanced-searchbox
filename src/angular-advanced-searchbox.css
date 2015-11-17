@@ -95,6 +95,7 @@
 
 .search-input-container {
     display: inline-block;
+    width: 95%;
 }
 
 .suggest-drop-down {
