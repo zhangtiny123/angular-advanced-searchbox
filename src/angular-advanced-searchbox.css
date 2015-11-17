@@ -34,7 +34,7 @@
         cursor: pointer;
     }
 
-    .advancedSearchBox .search-parameter {
+    .advancedSearchBox .nit-search-parameter {
         display: inline-block;
         height: 26px;
         margin: 0 7px 0 0;
@@ -49,56 +49,52 @@
         transition: box-shadow 100ms linear;
     }
 
-        .advancedSearchBox .search-parameter:hover {
+        .advancedSearchBox .nit-search-parameter:hover {
             box-shadow: 0 3px 3px rgba(0,0,0,0.2);
         }
 
-        .advancedSearchBox .search-parameter div {
+        .advancedSearchBox .nit-search-parameter div {
             float: left;
             margin: 0 2px;
         }
 
-        .advancedSearchBox .search-parameter .remove {
+        .advancedSearchBox .nit-search-parameter .remove {
             color: gray;
             margin-left: 5px;
             cursor: pointer;
         }
 
-        .advancedSearchBox .search-parameter .key {
+        .advancedSearchBox .nit-search-parameter .key {
             color: black;
         }
 
-        .advancedSearchBox .search-parameter .value span {
+        .advancedSearchBox .nit-search-parameter .value span {
             color: black;
         }
 
-        .advancedSearchBox .search-parameter .value input {
+        .advancedSearchBox .nit-search-parameter .value input {
             height: 24px;
             width: auto;
             outline: none;
             border: none;
         }
 
-    .advancedSearchBox .search-parameter-input {
+    .advancedSearchBox .nit-search-parameter-input {
         display: inline-block;
-        width: 100%;
+        width: 95%;
+        min-width: 120px;
         height: 28px;
         border: 0;
         margin: 0;
         padding: 0;
     }
 
-        .advancedSearchBox .search-parameter-input:focus {
+        .advancedSearchBox .nit-search-parameter-input:focus {
             box-shadow: none;
             outline: none;
         }
 
-.search-input-container {
-    display: inline-block;
-    width: 95%;
-}
-
-.suggest-drop-down {
+.nit-suggest-drop-down {
     display: block;
     position: absolute;
     z-index: 20000;
@@ -106,17 +102,17 @@
     border-radius: 4px;
 }
 
-.suggest-drop-down ul {
+.nit-suggest-drop-down ul {
     list-style: none;
     padding: 0;
 }
 
-.suggest-drop-down ul li {
+.nit-suggest-drop-down ul li {
     padding: 5px 10px 5px 10px;
     color: white;
 }
 
-.suggest-drop-down ul li:hover {
+.nit-suggest-drop-down ul li:hover {
     background-color: olivedrab;
     cursor: pointer;
 }
