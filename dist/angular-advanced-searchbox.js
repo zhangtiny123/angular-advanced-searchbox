@@ -17,7 +17,8 @@ angular.module('angular-advanced-searchbox', [])
             scope: {
                 model: '=ngModel',
                 parameters: '=',
-                placeholder: '@'
+                placeholder: '@',
+                remotesuggestions: '&'
             },
             replace: true,
             templateUrl: 'angular-advanced-searchbox.html',
@@ -127,10 +128,12 @@ angular.module('angular-advanced-searchbox', [])
                     });
 
                     $scope.getMySuggestions = function(thisSearchParam, $viewValue) {
-                        if ($viewValue === '' || $viewValue === ' ') {
-                            return thisSearchParam.suggestions;
-                        }
-                        return $filter('filter')(thisSearchParam.suggestions, function (s) { return s.name.toLowerCase().indexOf($viewValue.toLowerCase()) !== -1; });
+                        return $scope.remotesuggestions()(thisSearchParam, $scope.model).then(function(suggestions) {
+                            if ($viewValue === '' || $viewValue === ' ') {
+                                return suggestions;
+                            }
+                            return $filter('filter')(suggestions, function (s) { return s.name.toLowerCase().indexOf($viewValue.toLowerCase()) !== -1; });
+                        });
                     };
 
                     $scope.focusSearchBox = function() {
