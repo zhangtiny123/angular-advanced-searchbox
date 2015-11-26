@@ -27,7 +27,13 @@
                        ng-model="searchParam.value"
                        typeahead-on-select="itemOnSelect(searchParam)"
                        typeahead="suggestion as suggestion.name for suggestion in getMySuggestions(searchParam, $viewValue)"
+                       typeahead-loading="loadingSuggestions"
+                       typeahead-no-results="noResults"
                        placeholder="{{searchParam.placeholder}}"/>
+                <i ng-if="loadingSuggestions" class="glyphicon glyphicon-refresh"></i>
+                <div ng-if="noResults">
+                    <i class="glyphicon glyphicon-remove"></i> No Suggestions Found
+                </div>
             </div>
         </div>
         <input name="searchbox"
