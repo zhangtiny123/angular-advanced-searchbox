@@ -33,6 +33,43 @@ $scope.getRemoteSuggestions = function(currentEditingSearchParam, allSearchParam
 }
 ```
 
+The returned suggestions data structure is 
+
+```
+[{
+    'name': 'display_name',
+    'key': 'search_key'
+}]
+```
+Here you should notice that 'name' is for display, 'key' for search
+
+
+The parameter currentEditingSearchParam is something like
+
+```
+{
+    editMode: false
+    id: "41425245"
+    key: "project.name"
+    name: "项目"
+    placeholder: "项目.."
+}
+```
+The 'key','name' and 'placeholder' is decided by the configuration of 'availableSearchParams'
+
+And the parameter AllSearchPrams is like
+
+```
+[{
+    editMode: false
+    id: "41425245"
+    value: {
+        key: "wz"
+        name: "WZ"
+    }
+}]
+```
+
 **NOW you can select same param more one time!**
 
 
