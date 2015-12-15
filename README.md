@@ -5,6 +5,7 @@ A directive for AngularJS providing a advanced visual search box.
 
 ### UPDATE
 **1. update the UI style**
+
 **2. change the data structure of ngModel**
 
 - DATA STRUCTURE
@@ -13,6 +14,22 @@ A directive for AngularJS providing a advanced visual search box.
 ngModel: {
     name: [{id: 'id1', value: 'name1'},...],
     query: ['value']
+}
+```
+
+### USAGE
+
+In the html file
+```
+<nit-advanced-searchbox ng-model="searchParams" remotesuggestions="getRemoteSuggestions" parameters="availableSearchParams" placeholder="placeholder text"></nit-advanced-searchbox>
+```
+
+In the controller
+```
+$scope.getRemoteSuggestions = function(currentEditingSearchParam, allSearchParams) {
+    //you can do something with the parameters passed in to call the remote API, and get a promise to return
+    //if the suggestions do not come from remote API, we can return a promise by $q.
+    ...
 }
 ```
 
