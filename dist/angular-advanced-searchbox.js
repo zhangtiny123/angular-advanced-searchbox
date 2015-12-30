@@ -106,7 +106,7 @@ angular.module('angular-advanced-searchbox', [])
                         var calculatedWidth = 0;
                         if (ParamLabels.length > 0) {
                             var lastLabel = ParamLabels[ParamLabels.length - 1].getBoundingClientRect();
-                            calculatedWidth = (parentRect.width - (lastLabel.left + lastLabel.width - parentRect.left) - 67);
+                            calculatedWidth = (parentRect.width - (lastLabel.left + lastLabel.width - parentRect.left) - 75);
                         }
 
                         if (calculatedWidth && calculatedWidth >= mainInput.minWidth) {
