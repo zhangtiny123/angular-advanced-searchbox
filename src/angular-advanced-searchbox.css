@@ -116,3 +116,8 @@
     background-color: olivedrab;
     cursor: pointer;
 }
+
+.dropdown-menu {
+    max-height: 400px;
+    overflow: auto;
+}
