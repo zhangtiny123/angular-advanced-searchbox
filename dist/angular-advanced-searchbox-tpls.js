@@ -106,7 +106,7 @@ angular.module('angular-advanced-searchbox', [])
                         var calculatedWidth = 0;
                         if (ParamLabels.length > 0) {
                             var lastLabel = ParamLabels[ParamLabels.length - 1].getBoundingClientRect();
-                            calculatedWidth = (parentRect.width - (lastLabel.left + lastLabel.width - parentRect.left) - 75);
+                            calculatedWidth = (parentRect.width - (lastLabel.left + lastLabel.width - parentRect.left) - 70);
                         }
 
                         if (calculatedWidth && calculatedWidth >= mainInput.minWidth) {
@@ -172,7 +172,7 @@ angular.module('angular-advanced-searchbox', [])
                         var searchParam = $scope.searchParams[index];
                         searchParam.editMode = true;
 
-                         $timeout(resizeMainInput, 50);
+                         $timeout(resizeMainInput, 150);
                         updateModel('change', searchParam);
                     };
 
@@ -188,7 +188,7 @@ angular.module('angular-advanced-searchbox', [])
                         if (searchParam.value.length === 0)
                             $scope.removeSearchParam(index);
 
-                         $timeout(resizeMainInput, 50);
+                         $timeout(resizeMainInput, 150);
                     };
 
                     $scope.typeaheadOnSelect = function (item, model, label) {
@@ -217,7 +217,7 @@ angular.module('angular-advanced-searchbox', [])
                         $scope.searchParams.push(newItem);
 
                         document.getElementsByClassName('nit-search-parameter-input')[0].style.width = 50 + 'px';
-                        $timeout(resizeMainInput, 50);
+                        $timeout(resizeMainInput, 150);
                         updateModel('add', newItem);
                     };
 
@@ -228,7 +228,7 @@ angular.module('angular-advanced-searchbox', [])
                         var searchParam = $scope.searchParams[index];
                         $scope.searchParams.splice(index, 1);
 
-                         $timeout(resizeMainInput, 50);
+                         $timeout(resizeMainInput, 150);
                         updateModel('delete', searchParam);
                     };
 
@@ -237,7 +237,7 @@ angular.module('angular-advanced-searchbox', [])
                         $scope.searchQuery = '';
                         
                         $scope.model = {};
-                         $timeout(resizeMainInput, 50);
+                         $timeout(resizeMainInput, 150);
                     };
 
                     $scope.editPrevious = function(currentIndex) {
