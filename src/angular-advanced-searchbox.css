@@ -112,8 +112,9 @@
     color: white;
 }
 
-.nit-suggest-drop-down ul li:hover {
-    background-color: olivedrab;
+.nit-suggest-drop-down ul li.active {
+    background-color: #666;
+    color: darkorange;
     cursor: pointer;
 }
 

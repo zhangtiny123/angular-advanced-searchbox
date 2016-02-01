@@ -52,7 +52,7 @@
     </div>
     <div class="nit-suggest-drop-down" ng-show="parameters && focus && searchQuery == ''">
         <ul>
-            <li  ng-mousedown="addSearchParam(param)" ng-repeat="param in parameters">
+            <li ng-class="{'active': activeIndex == $index}" ng-mouseenter="setActive($index)" ng-mousedown="addSearchParam(param)" ng-repeat="param in parameters">
                 {{param.name}}
             </li>
         </ul>
