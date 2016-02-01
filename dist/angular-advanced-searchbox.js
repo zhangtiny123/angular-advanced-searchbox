@@ -82,6 +82,50 @@ angular.module('angular-advanced-searchbox', [])
                         });
                     }
 
+                    $scope.activeIndex = 0;
+
+                    $scope.setActive = function(itemIndex) {
+                        $scope.activeIndex = itemIndex;
+                    };
+
+                    var selectPreviousItem = function() {
+                        var prevIndex = $scope.activeIndex - 1;
+                        if (prevIndex >= 0) {
+                            $scope.setActive(prevIndex);
+                        }
+                    };
+
+                    var selectNextItem = function() {
+                        var nextIndex = $scope.activeIndex + 1;
+                        if (nextIndex < $scope.parameters.length) {
+                            $scope.setActive(nextIndex);
+                        }
+                    };
+
+                    var selectActiveItem = function()  {
+                        if ($scope.activeIndex >= 0 && $scope.activeIndex < $scope.parameters.length) {
+                            $scope.addSearchParam($scope.parameters[$scope.activeIndex]);
+                        }
+                    };
+
+                    $element.bind("keydown keypress", function (event) {
+                        switch (event.which) {
+                            case 38: //up
+                                $scope.$apply(selectPreviousItem);
+                                break;
+                            case 40: //down
+                                $scope.$apply(selectNextItem);
+                                break;
+                            case 13: // return
+                                if ($scope.focus && $scope.parameters && $scope.parameters.length > 0) {
+                                    // only preventDefault when there is a list so that we can submit form with return key after a selection is made
+                                    event.preventDefault();
+                                    $scope.$apply(selectActiveItem);
+                                }
+                                break;
+                        }
+                    });
+
                     $scope.$watch('model', function (newValue, oldValue) {
 
                         if(angular.equals(newValue, oldValue))
